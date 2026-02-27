@@ -55,3 +55,52 @@ map.on("mousemove", function (e) {
 map.on("click", function () {
   frozen = !frozen;
 });
+
+let gmMode = false;
+const GM_PASSCODE = "afterlife"; // change this to whatever you want
+
+const gmButton = document.getElementById("gm-toggle");
+
+gmButton.addEventListener("click", () => {
+  if (!gmMode) {
+    const input = prompt("Enter GM passcode:");
+    if (input !== GM_PASSCODE) {
+      alert("Access denied.");
+      return;
+    }
+  }
+
+  gmMode = !gmMode;
+  gmButton.textContent = gmMode ? "GM Mode: ON" : "GM Mode: OFF";
+  gmButton.classList.toggle("active");
+
+  loadLocations();
+});
+
+let markerLayer = L.layerGroup().addTo(map);
+
+function loadLocations() {
+  markerLayer.clearLayers();
+
+  fetch("data/locations.json")
+    .then(response => response.json())
+    .then(locations => {
+      locations.forEach(location => {
+        if (!location.discovered && !gmMode) return;
+
+        const marker = L.marker([location.y, location.x]);
+
+        marker.bindPopup(`
+          <strong>${location.name}</strong><br/>
+          Faction: ${location.faction}<br/>
+          ${location.description}
+          ${!location.discovered ? "<br/><em>UNDISCOVERED</em>" : ""}
+        `);
+
+        markerLayer.addLayer(marker);
+      });
+    });
+}
+
+// Initial load
+loadLocations();
