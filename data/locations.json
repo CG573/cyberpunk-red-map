@@ -29,6 +29,6 @@
         "y": 888,
         "faction": "Militech",
         "description": "Repurposed warehouse compound on the outskirts of Night City, fortified with razor wire, floodlights, and controlled gate access. Used for temporary detainment and interrogation operations.",
-        "discovered": false
+        "discovered": true
     }
 ]
